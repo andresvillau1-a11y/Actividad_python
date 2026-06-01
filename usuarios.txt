@@ -1,0 +1,8 @@
+
+Documento: 10
+Nombre: juana
+Correo: juna@gmail.com
+Rol: Instructor
+Estado: Activo
+-------------------------
+

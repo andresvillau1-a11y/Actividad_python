@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+
+<html lang="es">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>TechStore</title>
+
+<!-- Bootstrap -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+
+
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+
+    <div class="container">
+
+        <a class="navbar-brand" href="/">TechStore</a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menu">
+
+            <span class="navbar-toggler-icon"></span>
+
+        </button>
+
+        <div class="collapse navbar-collapse" id="menu">
+
+            <ul class="navbar-nav ms-auto">
+
+                <li class="nav-item">
+                    <a class="nav-link" href="/">Inicio</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="productos">Productos</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="{{url_for('servicios')}}">Servicios</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="nosotros">Nosotros</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="contacto">Contacto</a>
+                </li>
+
+            </ul>
+
+        </div>
+
+    </div>
+
+</nav>
+
+<!-- HERO -->
+
+<section class="container mt-5 text-center">
+
+    <h1 class="display-4">
+        Bienvenidos a TechStore
+    </h1>
+
+    <p class="lead">
+        Tu tienda virtual de dispositivos tecnológicos
+    </p>
+
+    <button class="btn btn-primary">
+        Ver productos
+    </button>
+
+</section>
+
+<!-- CARDS -->
+
+<section class="container mt-5">
+
+    <div class="row">
+
+        <div class="col-md-4">
+
+            <div class="card">
+
+                <img src="https://picsum.photos/300/200" class="card-img-top">
+
+                <div class="card-body">
+
+                    <h5 class="card-title">
+                        Laptop Gamer
+                    </h5>
+
+                    <p class="card-text">
+                        Equipos de alto rendimiento.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-4">
+
+            <div class="card">
+
+                <img src="https://picsum.photos/300/201" class="card-img-top">
+
+                <div class="card-body">
+
+                    <h5 class="card-title">
+                        Smartphones
+                    </h5>
+
+                    <p class="card-text">
+                        Última tecnología móvil.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-4">
+
+            <div class="card">
+
+                <img src="https://picsum.photos/300/202" class="card-img-top">
+
+                <div class="card-body">
+
+                    <h5 class="card-title">
+                        Accesorios
+                    </h5>
+
+                    <p class="card-text">
+                        Audífonos, teclados y más.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+  </body>
+</body>
+
+</html>

@@ -1,7 +1,8 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request,redirect,url_for,flash
 from database.conexion import obtener_conexion
 
 app = Flask(__name__)
+app.secret_key = ""
 
 @app.route("/")
 def inicio():
@@ -44,13 +45,27 @@ def guardar_producto():
     precio = request.form["precio"]
     categoria = request.form["categoria"]
 
-    return render_template(
-        "respuesta.html",
-        codigo=codigo,
-        nombre=nombre,
-        precio=precio,
-        categoria=categoria
-        )
+   # return render_template(
+    #    "respuesta.html",
+     #   codigo=codigo,
+      #  nombre=nombre,
+       # precio=precio,
+        #categoria=categoria
+        #)
+
+    conexion = obtener_conexion()
+    cursor = conexion.cursor()
+
+    sql = "INSERT INTO productos (codigo, nombre, precio, categoria) VALUES (%s, %s, %s, %s)"
+
+    cursor.execute(sql, (codigo, nombre, precio, categoria))
+
+    conexion.commit()
+    
+    flash("Producto registrado exitosamente", "success")
+    cursor.close()
+
+    return redirect(url_for("/productos"))
 
 app.run(debug=True)
 

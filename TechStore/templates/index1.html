@@ -145,21 +145,26 @@
             <a href="#" class="text-decoration-none">Ver todo <i class="bi bi-arrow-right"></i></a>
         </div>
         <div class="row g-4">
-            <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
+            <!--Recorre la lista productos que el servidor envía a la plantilla.-->
+            {% for producto in productos %}
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
                 <div class="card h-100 shadow-sm border-0">
                     <span class="position-absolute badge bg-danger m-2">Oferta</span>
                     <img src="https://placehold.co/200x150/orange/white/" class="card-img-top" alt="...">
                     <div class="card-body d-flex flex-column">
-                        <h6 class="text-muted mb-1">Laptops</h6>
-                        <h5 class="card-title mb-2">MacBook Pro M3 - 14"</h5>
-                        <p class="card-text text-primary fw-bold fs-5">$3.500.000</p>
+                        <h6 class="text-muted mb-1">{{ producto.categoria }}</h6>
+                        <h5 class="card-title mb-2">{{ producto.nombre }}</h5>
+                        <p class="card-text text-primary fw-bold fs-5">${{ producto.precio }}</p>
                         <div class="mt-auto d-grid gap-2">
                             <button class="btn btn-outline-dark btn-sm">Detalles</button>
-                            <button class="btn btn-success btn-sm"><i class="bi bi-cart-plus"></i>Añadir</button>
+                            <button href="{{ url_for('registro_producto') }}"
+                                onclick="window.location.href='{{ url_for('registro_producto') }}'"
+                                class="btn btn-success btn-sm"><i class="bi bi-cart-plus"></i>Añadir</button>
                         </div>
                     </div>
                 </div>
             </div>
+            {% endfor %}
         </div>
     </main>
 

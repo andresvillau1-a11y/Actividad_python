@@ -3,238 +3,146 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inventario de Productos</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
-    <style>
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    <title>Productos TechStore</title>
 
-        :root {
-          --bg: #f0f2f5;
-          --surface: #ffffff;
-          --nav-bg: #1a1a2e;
-          --nav-text: #e8e8f0;
-          --accent: #2563eb;
-          --accent-hover: #1d4ed8;
-          --text-primary: #111827;
-          --text-secondary: #6b7280;
-          --border: #e5e7eb;
-          --radius: 10px;
-          --shadow: 0 2px 12px rgba(0,0,0,0.08);
-          --badge-comp: #0ea5e9;
-          --badge-acc: #06b6d4;
-          --badge-mon: #22d3ee;
-          --success: #16a34a;
-        }
-
-        body {
-          font-family: 'Inter', sans-serif;
-          background: var(--bg);
-          color: var(--text-primary);
-          min-height: 100vh;
-        }
-
-        /* ── Navbar ── */
-        nav {
-          background: var(--nav-bg);
-          padding: 0 28px;
-          height: 52px;
-          display: flex;
-          align-items: center;
-          gap: 10px;
-        }
-        nav .logo-icon {
-          width: 28px; height: 28px;
-          background: var(--accent);
-          border-radius: 6px;
-          display: flex; align-items: center; justify-content: center;
-          font-size: 14px;
-          color: #fff;
-          font-weight: bold;
-        }
-        nav .brand {
-          font-size: 15px;
-          font-weight: 600;
-          color: var(--nav-text);
-          letter-spacing: 0.01em;
-        }
-
-        /* ── Layout ── */
-        main {
-          max-width: 960px;
-          margin: 32px auto;
-          padding: 0 20px;
-        }
-
-        /* ── Panel header ── */
-        .panel-header {
-          background: var(--accent);
-          border-radius: var(--radius) var(--radius) 0 0;
-          padding: 18px 24px;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-        }
-        .panel-header h2 {
-          font-size: 20px;
-          font-weight: 700;
-          color: #fff;
-        }
-        .total-badge {
-          background: #f59e0b;
-          color: #fff;
-          font-size: 13px;
-          font-weight: 600;
-          padding: 4px 14px;
-          border-radius: 20px;
-        }
-
-        /* ── Panel body ── */
-        .panel-body {
-          background: var(--surface);
-          border-radius: 0 0 var(--radius) var(--radius);
-          box-shadow: var(--shadow);
-          padding: 24px;
-        }
-
-        /* ── Button add ── */
-        .btn-add {
-          display: inline-flex;
-          align-items: center;
-          gap: 6px;
-          background: #16a34a;
-          color: #fff;
-          font-size: 13.5px;
-          font-weight: 600;
-          padding: 8px 18px;
-          border-radius: 7px;
-          border: none;
-          cursor: pointer;
-          transition: background .2s;
-          margin-bottom: 20px;
-          text-decoration: none;
-        }
-        .btn-add:hover { background: #15803d; }
-
-        /* ── Table ── */
-        table {
-          width: 100%;
-          border-collapse: collapse;
-          font-size: 14px;
-        }
-        thead tr {
-          border-bottom: 2px solid var(--border);
-        }
-        thead th {
-          padding: 10px 14px;
-          text-align: left;
-          font-weight: 600;
-          color: var(--text-secondary);
-          font-size: 13px;
-          text-transform: uppercase;
-          letter-spacing: 0.04em;
-        }
-        thead th.right { text-align: right; }
-        tbody tr {
-          border-bottom: 1px solid var(--border);
-          transition: background .15s;
-        }
-        tbody tr:last-child { border-bottom: none; }
-        tbody tr:hover { background: #f8fafc; }
-        tbody td {
-          padding: 13px 14px;
-          color: var(--text-primary);
-        }
-        tbody td.price { text-align: right; font-weight: 500; }
-        tbody td.code { font-family: monospace; color: var(--text-secondary); font-size: 13px; }
-
-        /* ── Category badges ── */
-        .badge {
-          display: inline-block;
-          padding: 3px 11px;
-          border-radius: 20px;
-          font-size: 12px;
-          font-weight: 600;
-          color: #fff;
-        }
-        .badge-comp { background: #2563eb; }
-        .badge-acc  { background: #0891b2; }
-        .badge-mon  { background: #0d9488; }
-        .badge-default { background: #7c3aed; }
-
-        /* ── Empty state ── */
-        .empty {
-          text-align: center;
-          padding: 40px 0;
-          color: var(--text-secondary);
-          font-size: 14px;
-        }
-    </style>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
 </head>
-<body>
 
-    <nav>
-        <div class="logo-icon">P</div>
-        <div class="brand">Panel de Control</div>
-    </nav>
+<body class="bg-light">
 
-    <main>
-        
-        <div class="panel-header">
-            <h2>Lista de Productos</h2>
-            <div class="total-badge">Productos</div>
+<nav class="navbar navbar-dark bg-primary">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="#">
+            <i class="bi bi-pc-display"></i>
+            TechStore
+        </a>
+    </div>
+</nav>
+
+<div class="container mt-5">
+    <div class="card shadow">
+
+        <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
+            <h3 class="mb-0">
+                Gestión de productos
+            </h3>
+            <span class="badge bg-primary fs-6">
+                Total: {{ longitud }}
+            </span>
         </div>
 
-        <div class="panel-body">
-            
-            <button class="btn-add">
-                <span>+</span> <a href="{{ url_for('registro_producto') }}">Agregar Producto</a>
-            </button>
+        <!-- Cuerpo -->
+        <div class="card-body">
 
-            <table>
-                <thead>
+            <!-- Botón Registrar -->
+            <a href="{{ url_for('registro_producto') }}" class="btn btn-primary mb-3">
+                <i class="bi bi-plus-circle"></i>
+                Registrar Producto
+            </a>
+
+            <!-- Tabla -->
+            <table class="table table-bordered table-striped table-hover align-middle">
+                <thead class="table-primary">
                     <tr>
                         <th>Código</th>
                         <th>Nombre</th>
-                        <th class="right">Precio</th>
+                        <th class="text-end">Precio</th>
                         <th>Categoría</th>
+                        <th class="text-center">Acciones</th>
                     </tr>
                 </thead>
+
                 <tbody>
                     {% for producto in productos %}
                     <tr>
-                        <td class="code">{{ producto.codigo }}</td>
-                        <td><strong>{{ producto.nombre }}</strong></td>
-                        <td class="price">${{ producto.precio }}</td>
+                        <td>{{ producto.codigo }}</td>
+                        <td>{{ producto.nombre }}</td>
+                        <td class="text-end">${{ producto.precio }}</td>
                         <td>
-                            <span class="badge badge-default">{{ producto.categoria }}</span>
+                            <span class="badge bg-primary">
+                                {{ producto.categoria }}
+                            </span>
                         </td>
-                    </tr>
-                    {% else %}
-                    <tr>
-                        <td colspan="4" class="empty">No hay productos registrados en el inventario.</td>
+                        <td class="text-center">
+                            <a class="btn btn-info btn-sm text-white"
+                                href="/editar_producto/{{producto.codigo}}">
+                                <i class="bi bi-pencil-square"></i> Editar
+                            </a>
+
+                            <a class="btn btn-danger btn-sm btn-eliminar"
+                                href="/eliminar_producto/{{producto.codigo}}">
+                                <i class="bi bi-trash"></i> Eliminar
+                            </a>
+                        </td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
 
         </div>
-    </main>
+    </div>
+</div>
+
+<footer class="text-center mt-5 mb-3 text-secondary">
+    2026 TechStore - ADSO Flask + MySQL
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-{% with messages = get_flashed_messages(with_categories=true) %}
-  {% if messages %}
-  {% for category, message in messages %}
-    <script>
-          Swal.fire({
-            icon: '{{ categoria }}',
-            title: '{{ mensaje }}',
-            showConfirmButton: false,
-            timer: 2000
-          });
-    
-    </script>
-    {% endfor %}
-  {% endif %}
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const botonesEliminar = document.querySelectorAll(".btn-eliminar");
+
+    botonesEliminar.forEach(function (boton) {
+
+        boton.addEventListener("click", function (e) {
+
+            e.preventDefault();
+
+            const url = this.href;
+
+            Swal.fire({
+                title: "¿Está seguro?",
+                text: "Esta acción eliminará el producto de forma permanente.",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#0d6efd",
+                cancelButtonColor: "#6c757d",
+                confirmButtonText: "Sí, eliminar",
+                cancelButtonText: "Cancelar"
+            }).then((result) => {
+
+                if (result.isConfirmed) {
+                    window.location.href = url;
+                }
+
+            });
+
+        });
+
+    });
+
+});
+</script>
+
+<!-- Llamar a mensajes guardados -->
+{% with mensajes = get_flashed_messages(with_categories=true) %}
+    {% if mensajes %}
+        {% for categoria, mensaje in mensajes %}
+        <script>
+            Swal.fire({
+                icon: "{{ categoria }}",
+                title: "{{ mensaje }}",
+                showConfirmButton: false,
+                timer: 2000
+            });
+        </script>
+        {% endfor %}
+    {% endif %}
 {% endwith %}
+
 </body>
 </html>

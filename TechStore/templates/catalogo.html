@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Catálogo | TechStore</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+
+</head>
+
+<body>
+
+<!-- ================= NAVBAR ================= -->
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+
+    <div class="container">
+
+        <a class="navbar-brand fw-bold" href="{{ url_for('inicio') }}">
+            TechStore
+        </a>
+
+        <button class="navbar-toggler"
+                data-bs-toggle="collapse"
+                data-bs-target="#menu">
+
+            <span class="navbar-toggler-icon"></span>
+
+        </button>
+
+        <div class="collapse navbar-collapse" id="menu">
+
+            <ul class="navbar-nav ms-auto">
+
+                <li class="nav-item">
+                    <a class="nav-link"
+                       href="{{ url_for('inicio') }}">
+                        Inicio
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link active"
+                       href="{{ url_for('catalogo') }}">
+                        Productos
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link"
+                       href="{{ url_for('servicios') }}">
+                        Servicios
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link"
+                       href="{{ url_for('nosotros') }}">
+                        Nosotros
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link"
+                       href="{{ url_for('contacto') }}">
+                        Contacto
+                    </a>
+                </li>
+
+            </ul>
+
+        </div>
+
+    </div>
+
+</nav>
+
+<!-- ================= HERO ================= -->
+
+<section class="bg-primary text-white py-5">
+
+    <div class="container text-center">
+
+        <h1 class="display-5 fw-bold">
+
+            Catálogo de Productos
+
+        </h1>
+
+        <p class="lead">
+
+            Encuentra los mejores dispositivos tecnológicos al mejor precio.
+
+        </p>
+
+    </div>
+
+</section>
+
+<!-- ================= FILTROS ================= -->
+
+<section class="container mt-5">
+
+    <div class="row g-3">
+
+        <div class="col-md-5">
+
+            <input
+                type="text"
+                class="form-control"
+                placeholder="Buscar producto...">
+
+        </div>
+
+        <div class="col-md-3">
+
+            <select class="form-select">
+
+                <option selected>
+
+                    Todas las categorías
+
+                </option>
+
+                <option>Laptops</option>
+
+                <option>Celulares</option>
+
+                <option>Monitores</option>
+
+                <option>Accesorios</option>
+
+            </select>
+
+        </div>
+
+        <div class="col-md-3">
+
+            <select class="form-select">
+
+                <option selected>
+
+                    Ordenar por
+
+                </option>
+
+                <option>Precio menor</option>
+
+                <option>Precio mayor</option>
+
+                <option>Más vendidos</option>
+
+            </select>
+
+        </div>
+
+        <div class="col-md-1 d-grid">
+
+            <button class="btn btn-primary">
+
+                <i class="bi bi-search"></i>
+
+            </button>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- ================= PRODUCTOS ================= -->
+
+<section class="container my-5">
+
+    <div class="row g-4">
+
+        <!-- Producto -->
+
+        <div class="col-lg-3 col-md-6">
+
+            <div class="card h-100 shadow">
+
+                <img src="https://picsum.photos/300/220"
+                     class="card-img-top">
+
+                <div class="card-body">
+
+                    <h5 class="card-title">
+
+                        Laptop Gamer ASUS
+
+                    </h5>
+
+                    <p class="text-muted">
+
+                        Intel Core i7 • 16GB RAM • SSD 512GB
+
+                    </p>
+
+                    <h4 class="text-primary">
+
+                        $4.500.000
+
+                    </h4>
+
+                </div>
+
+                <div class="card-footer bg-white">
+
+                    <div class="d-grid gap-2">
+
+                        <a href="#"
+                           class="btn btn-outline-primary">
+
+                            Ver detalles
+
+                        </a>
+
+                        <button class="btn btn-success">
+
+                            <i class="bi bi-cart-plus"></i>
+
+                            Agregar al carrito
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Repetir tarjetas -->
+
+        <div class="col-lg-3 col-md-6">
+
+            <div class="card h-100 shadow">
+
+                <img src="https://picsum.photos/301/220"
+                     class="card-img-top">
+
+                <div class="card-body">
+
+                    <h5 class="card-title">
+
+                        iPhone 16
+
+                    </h5>
+
+                    <p class="text-muted">
+
+                        256 GB • Negro
+
+                    </p>
+
+                    <h4 class="text-primary">
+
+                        $5.900.000
+
+                    </h4>
+
+                </div>
+
+                <div class="card-footer bg-white">
+
+                    <div class="d-grid gap-2">
+
+                        <a href="#"
+                           class="btn btn-outline-primary">
+
+                            Ver detalles
+
+                        </a>
+
+                        <button class="btn btn-success">
+
+                            <i class="bi bi-cart-plus"></i>
+
+                            Agregar al carrito
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Puedes repetir más tarjetas -->
+
+    </div>
+
+</section>
+
+<!-- ================= PAGINACIÓN ================= -->
+
+<section class="container mb-5">
+
+    <nav>
+
+        <ul class="pagination justify-content-center">
+
+            <li class="page-item disabled">
+
+                <a class="page-link">
+
+                    Anterior
+
+                </a>
+
+            </li>
+
+            <li class="page-item active">
+
+                <a class="page-link">
+
+                    1
+
+                </a>
+
+            </li>
+
+            <li class="page-item">
+
+                <a class="page-link">
+
+                    2
+
+                </a>
+
+            </li>
+
+            <li class="page-item">
+
+                <a class="page-link">
+
+                    3
+
+                </a>
+
+            </li>
+
+            <li class="page-item">
+
+                <a class="page-link">
+
+                    Siguiente
+
+                </a>
+
+            </li>
+
+        </ul>
+
+    </nav>
+
+</section>
+
+<!-- ================= FOOTER ================= -->
+
+<footer class="bg-dark text-white text-center py-4">
+
+    <div class="container">
+
+        <p class="mb-1">
+
+            © 2026 TechStore
+
+        </p>
+
+        <small>
+
+            Desarrollado con Flask + Bootstrap
+
+        </small>
+
+    </div>
+
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

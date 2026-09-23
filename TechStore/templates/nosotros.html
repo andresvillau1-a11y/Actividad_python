@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Nosotros | TechStore</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+
+</head>
+
+<body>
+
+    <!--==================== NAVBAR ====================-->
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+
+        <div class="container">
+
+            <a class="navbar-brand fw-bold" href="{{ url_for('inicio') }}">
+                TechStore
+            </a>
+
+            <button class="navbar-toggler"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#menu">
+
+                <span class="navbar-toggler-icon"></span>
+
+            </button>
+
+            <div class="collapse navbar-collapse" id="menu">
+
+                <ul class="navbar-nav ms-auto">
+
+                    <li class="nav-item">
+                        <a class="nav-link"
+                           href="{{ url_for('inicio') }}">
+                            Inicio
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link"
+                           href="{{ url_for('catalogo') }}">
+                            Productos
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link"
+                           href="{{ url_for('servicios') }}">
+                            Servicios
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link active"
+                           href="{{ url_for('nosotros') }}">
+                            Nosotros
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link"
+                           href="{{ url_for('contacto') }}">
+                            Contacto
+                        </a>
+                    </li>
+
+                </ul>
+
+            </div>
+
+        </div>
+
+    </nav>
+
+    <!--==================== HERO ====================-->
+
+    <section class="bg-primary text-white py-5">
+
+        <div class="container text-center">
+
+            <h1 class="display-4 fw-bold">
+
+                ¿Quiénes Somos?
+
+            </h1>
+
+            <p class="lead mt-3">
+
+                En TechStore creemos que la tecnología transforma vidas.
+                Nuestro compromiso es ofrecer productos de alta calidad,
+                excelente servicio y una experiencia de compra segura.
+
+            </p>
+
+        </div>
+
+    </section>
+
+    <!--==================== HISTORIA ====================-->
+
+    <section class="container py-5">
+
+        <div class="row align-items-center">
+
+            <div class="col-lg-6">
+
+                <img src="https://picsum.photos/600/400"
+                     class="img-fluid rounded shadow">
+
+            </div>
+
+            <div class="col-lg-6">
+
+                <h2 class="fw-bold">
+
+                    Nuestra Historia
+
+                </h2>
+
+                <hr>
+
+                <p class="text-muted">
+
+                    TechStore nació con el propósito de acercar la tecnología a
+                    todas las personas mediante una plataforma moderna, segura y
+                    confiable.
+
+                </p>
+
+                <p class="text-muted">
+
+                    A lo largo de nuestro crecimiento hemos incorporado nuevos
+                    productos, servicios y procesos que garantizan una excelente
+                    experiencia de compra para nuestros clientes.
+
+                </p>
+
+                <p class="text-muted">
+
+                    Nuestro objetivo es convertirnos en un referente del comercio
+                    electrónico ofreciendo innovación, calidad y atención
+                    personalizada.
+
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <!--==================== MISIÓN Y VISIÓN ====================-->
+
+    <section class="bg-light py-5">
+
+        <div class="container">
+
+            <div class="row g-4">
+
+                <div class="col-md-6">
+
+                    <div class="card h-100 shadow">
+
+                        <div class="card-body">
+
+                            <div class="text-center">
+
+                                <i class="bi bi-bullseye display-3 text-primary"></i>
+
+                            </div>
+
+                            <h3 class="text-center mt-3">
+
+                                Misión
+
+                            </h3>
+
+                            <p class="text-center text-muted">
+
+                                Brindar soluciones tecnológicas mediante la
+                                comercialización de productos innovadores y un
+                                servicio al cliente de alta calidad que genere
+                                confianza y satisfacción.
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="col-md-6">
+
+                    <div class="card h-100 shadow">
+
+                        <div class="card-body">
+
+                            <div class="text-center">
+
+                                <i class="bi bi-eye display-3 text-success"></i>
+
+                            </div>
+
+                            <h3 class="text-center mt-3">
+
+                                Visión
+
+                            </h3>
+
+                            <p class="text-center text-muted">
+
+                                Ser una empresa líder en soluciones tecnológicas,
+                                reconocida por la innovación, la calidad de sus
+                                productos y el excelente servicio ofrecido a sus
+                                clientes.
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>

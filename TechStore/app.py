@@ -1,0 +1,257 @@
+from flask import Flask, render_template, request,redirect, url_for, flash, session
+from database.conexion import obtener_conexion
+
+app = Flask(__name__)
+app.secret_key = "adso2026"
+
+@app.route("/")
+def inicio():
+     conexion = obtener_conexion()
+     cursor = conexion.cursor(dictionary=True)
+     cursor.execute("SELECT * FROM productos")
+     productos = cursor.fetchall()
+     cursor.close()
+     conexion.close()
+     return render_template("index1.html", productos = productos)
+
+@app.route("/productos")
+def productos():
+    conexion = obtener_conexion()
+
+    cursor = conexion.cursor(dictionary=True)
+
+    cursor.execute("SELECT * FROM productos")
+
+    productos = cursor.fetchall()
+
+    cursor.close()
+
+    conexion.close()
+
+    return render_template("productos.html",productos=productos)
+
+@app.route("/contacto")
+def contacto():
+    return render_template("contacto.html")
+
+@app.route("/nosotros")
+def nosotros():
+    return render_template("nosotros.html")
+
+@app.route("/servicios")
+def servicios():
+    return render_template("servicios.html")
+
+@app.route("/catalogo")
+def catalogo():
+    return render_template("catalogo.html")
+
+#Proteccion de rutas
+
+@app.route("/registro_producto")
+def registro_producto():
+    if "usuario" not in session:
+
+        return redirect(url_for("inicio"))
+    return render_template("registro_producto.html")
+
+
+@app.route("/guardar_producto",methods=["POST"])
+def guardar_producto():
+
+        if "usuario" not in session:
+            return redirect(url_for("inicio"))
+        
+        codigo = request.form["codigo"].strip()
+        nombre = request.form["nombre"].strip()
+        precio = request.form["precio"]
+        categoria = request.form["categoria"].strip()
+
+
+    # return render_template(
+    #     "respuesta.html",
+    #     codigo=codigo,
+    #     nombre=nombre,
+    #     precio=precio,
+    #     categoria=categoria
+    # )
+        conexion = obtener_conexion()
+
+        cursor = conexion.cursor()
+
+        sql = """ INSERT INTO productos (codigo,nombre,precio,categoria) VALUES (%s,%s,%s,%s) """
+
+        cursor.execute(
+        sql,
+        (
+            codigo,
+            nombre,
+            precio,
+            categoria
+         )
+        ) 
+
+        conexion.commit()
+
+        flash("Producto registrado correctamente", "success")
+        
+        cursor.close()
+        conexion.close()
+
+        return redirect(url_for("productos"))
+
+
+@app.route("/editar_producto/<codigo>")
+def editar_producto(codigo):
+
+    # Verificar si existe una sesión activa
+    if "usuario" not in session:
+        return redirect(url_for("inicio"))
+
+    conexion = obtener_conexion()
+    cursor = conexion.cursor(dictionary=True)
+
+    sql = """
+    SELECT *
+    FROM productos
+    WHERE codigo=%s
+    """
+
+    cursor.execute(sql, (codigo,))
+
+    producto = cursor.fetchone()
+
+    cursor.close()
+    conexion.close()
+
+    return render_template(
+        "editar_producto.html",
+        producto=producto
+    )
+
+@app.route("/actualizar_producto", methods=["POST"])
+def actualizar_producto():
+
+    if "usuario" not in session:
+        return redirect(url_for("inicio"))
+
+    codigo = request.form["codigo"]
+    nombre = request.form["nombre"]
+    precio = request.form["precio"]
+    categoria = request.form["categoria"]
+
+    # Obtener la conexión
+    conexion = obtener_conexion()
+
+    # Crear el cursor
+    cursor = conexion.cursor()
+
+    # Consulta SQL
+    sql = """UPDATE productos SET nombre = %s,precio = %s,categoria = %s  WHERE codigo = %s """
+
+    cursor.execute(
+        sql,
+        (
+            nombre,
+            precio,
+            categoria,
+            codigo
+        )
+    )
+
+    # Guardar los cambios
+    conexion.commit()
+
+    # Cerrar recursos
+    cursor.close()
+    conexion.close()
+
+    # Mensaje de éxito
+    flash("Producto actualizado correctamente", "success")
+
+    # Redireccionar al listado
+    return redirect(url_for("productos"))
+
+@app.route("/eliminar_producto/<codigo>")
+def eliminar_producto(codigo):
+
+
+    if "usuario" not in session:
+        return redirect(url_for("inicio"))
+    
+    conexion = obtener_conexion()
+    
+    cursor = conexion.cursor()
+
+    sql = """DELETE FROM productos WHERE codigo=%s"""
+
+    cursor.execute(sql,(codigo,))
+
+    conexion.commit()
+   
+    flash("Producto eliminado correctamente", "success")
+
+    cursor.close()
+    conexion.close()
+
+    return redirect(url_for("productos"))
+
+@app.route("/login", methods=["POST"])
+def login():
+    correo = request.form["correo"]
+    password = request.form["password"]
+
+    conexion = obtener_conexion()
+
+    cursor = conexion.cursor(dictionary=True)
+
+    sql = """ 
+    SELECT * FROM usuarios WHERE correo=%s AND password=%s AND estado='Activo' 
+    """
+
+    cursor.execute(sql,(correo,password))
+
+    usuario = cursor.fetchone()
+
+    cursor.close()
+    conexion.close()
+
+    if usuario:
+        session["usuario"]= usuario["nombre"]
+        session["rol"] = usuario["rol"]
+
+        return redirect(url_for("admin"))
+    else:
+        flash("Correo o contraseña incorrectos","danger")
+
+        return redirect(url_for("inicio"))
+    
+
+@app.route("/admin")
+def admin():
+
+    if "usuario" not in session:
+
+        return redirect(url_for("inicio"))
+
+    return render_template("admin.html")
+
+@app.route("/logout")
+def logout():
+
+    session.clear()
+
+    return redirect(url_for("inicio"))
+
+app.run(debug=True)
+
+# TechStore/
+# │
+# ├── app.py
+# │
+# ├── templates/
+# │   ├── index.html
+# │   ├── registro_producto.html
+# │   └── respuesta.html
+# │
+# └── static/

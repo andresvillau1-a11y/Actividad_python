@@ -196,9 +196,55 @@ def eliminar_producto(codigo):
 
     return redirect(url_for("productos"))
 
+@app.route("/registrar_usuario", methods=["POST"])
+def registrar_usuario():
+    nombre = request.form["nombre"].strip()
+    correo = request.form["correo"].strip().lower()
+    password = request.form["password"]
+    password2 = request.form.get("password2", "")
+
+    # Validaciones básicas
+    if not nombre or not correo or not password:
+        flash("Todos los campos son obligatorios", "danger")
+        return redirect(url_for("inicio"))
+
+    if password != password2:
+        flash("Las contraseñas no coinciden", "danger")
+        return redirect(url_for("inicio"))
+
+    if len(password) < 6:
+        flash("La contraseña debe tener al menos 6 caracteres", "danger")
+        return redirect(url_for("inicio"))
+
+    conexion = obtener_conexion()
+    cursor = conexion.cursor(dictionary=True)
+
+    # Verificar que el correo no esté registrado
+    cursor.execute("SELECT id FROM usuarios WHERE correo=%s", (correo,))
+    if cursor.fetchone():
+        cursor.close()
+        conexion.close()
+        flash("Ese correo ya está registrado", "danger")
+        return redirect(url_for("inicio"))
+
+    # Guardar la contraseña como HASH (nunca en texto plano)
+    from werkzeug.security import generate_password_hash
+    password_hash = generate_password_hash(password)
+
+    sql = """INSERT INTO usuarios (nombre, correo, password) VALUES (%s, %s, %s)"""
+    cursor.execute(sql, (nombre, correo, password_hash))
+    conexion.commit()
+
+    cursor.close()
+    conexion.close()
+
+    flash("¡Cuenta creada correctamente! Ahora puedes iniciar sesión", "success")
+    return redirect(url_for("inicio"))
+
+
 @app.route("/login", methods=["POST"])
 def login():
-    correo = request.form["correo"]
+    correo = request.form["correo"].strip().lower()
     password = request.form["password"]
 
     conexion = obtener_conexion()
@@ -206,17 +252,21 @@ def login():
     cursor = conexion.cursor(dictionary=True)
 
     sql = """ 
-    SELECT * FROM usuarios WHERE correo=%s AND password=%s AND estado='Activo' 
+    SELECT * FROM usuarios WHERE correo=%s AND estado='Activo' 
     """
 
-    cursor.execute(sql,(correo,password))
+    cursor.execute(sql,(correo,))
 
     usuario = cursor.fetchone()
 
     cursor.close()
     conexion.close()
 
-    if usuario:
+    from werkzeug.security import check_password_hash
+
+    # Usuario nuevo (contraseña con hash) o antiguo (texto plano, ej: juan)
+    if usuario and (check_password_hash(usuario["password"], password)
+                    or usuario["password"] == password):
         session["usuario"]= usuario["nombre"]
         session["rol"] = usuario["rol"]
 

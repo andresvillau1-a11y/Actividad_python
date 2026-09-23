@@ -300,24 +300,64 @@
                 </div>
 
                 <div class="modal-body">
-                    <form action="">
+                    <form action="/registrar_usuario" method="POST">
 
                         <div class="mb-3">
-                            <label class="form-label">Nombre completo</label>
-                            <input type="text" class="form-control">
+                            <label class="form-label">
+                                <i class="bi bi-person-badge"></i> Nombre completo
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-person"></i></span>
+                                <input type="text" class="form-control" name="nombre"
+                                    placeholder="Juan Pérez" required>
+                            </div>
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label">Correo</label>
-                            <input type="email" class="form-control">
+                            <label class="form-label">
+                                <i class="bi bi-envelope-paper"></i> Correo electrónico
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                                <input type="email" class="form-control" name="correo"
+                                    placeholder="correo@ejemplo.com" required>
+                            </div>
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label">Contraseña</label>
-                            <input type="password" class="form-control">
+                            <label class="form-label">
+                                <i class="bi bi-shield-lock"></i> Contraseña
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-key"></i></span>
+                                <input type="password" class="form-control" name="password"
+                                    id="reg-password" minlength="6" placeholder="Mínimo 6 caracteres" required>
+                                <button class="btn btn-outline-secondary" type="button" id="btn-toggle-pass"
+                                    tabindex="-1">
+                                    <i class="bi bi-eye" id="icon-toggle-pass"></i>
+                                </button>
+                            </div>
                         </div>
 
-                        <button class="btn btn-primary w-100">Registrarse</button>
+                        <div class="mb-3">
+                            <label class="form-label">
+                                <i class="bi bi-shield-check"></i> Confirmar contraseña
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-key-fill"></i></span>
+                                <input type="password" class="form-control" name="password2"
+                                    id="reg-password2" minlength="6" placeholder="Repite la contraseña" required>
+                                <span class="input-group-text" id="icon-coincide">
+                                    <i class="bi bi-question-circle text-muted"></i>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="bi bi-person-plus"></i> Registrarse
+                            </button>
+                        </div>
 
                     </form>
 
@@ -337,6 +377,37 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Mostrar / ocultar contraseña
+        const btnToggle = document.getElementById("btn-toggle-pass");
+        const campoPass = document.getElementById("reg-password");
+        const iconToggle = document.getElementById("icon-toggle-pass");
+
+        btnToggle.addEventListener("click", function () {
+            if (campoPass.type === "password") {
+                campoPass.type = "text";
+                iconToggle.className = "bi bi-eye-slash";
+            } else {
+                campoPass.type = "password";
+                iconToggle.className = "bi bi-eye";
+            }
+        });
+
+        // Verificar que las contraseñas coinciden
+        const campoPass2 = document.getElementById("reg-password2");
+        const iconCoincide = document.getElementById("icon-coincide");
+
+        campoPass2.addEventListener("input", function () {
+            if (campoPass2.value === "") {
+                iconCoincide.innerHTML = '<i class="bi bi-question-circle text-muted"></i>';
+            } else if (campoPass2.value === campoPass.value) {
+                iconCoincide.innerHTML = '<i class="bi bi-check-circle-fill text-success"></i>';
+            } else {
+                iconCoincide.innerHTML = '<i class="bi bi-x-circle-fill text-danger"></i>';
+            }
+        });
+    </script>
 </body>
 
 </html>

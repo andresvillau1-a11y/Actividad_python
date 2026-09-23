@@ -6,8 +6,9 @@ CREATE TABLE usuarios(
 id INT AUTO_INCREMENT PRIMARY KEY,
 nombre VARCHAR(80) NOT NULL,
 correo VARCHAR(100) UNIQUE NOT NULL,
+telefono VARCHAR(20) NULL,
 password VARCHAR(255) NOT NULL,
-rol ENUM('Administrador') DEFAULT 'Administrador',
+rol ENUM('Administrador','Cliente') DEFAULT 'Administrador',
 estado ENUM('Activo','Inactivo') DEFAULT 'Activo'
 );
 

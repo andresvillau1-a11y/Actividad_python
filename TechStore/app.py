@@ -200,12 +200,17 @@ def eliminar_producto(codigo):
 def registrar_usuario():
     nombre = request.form["nombre"].strip()
     correo = request.form["correo"].strip().lower()
+    telefono = request.form.get("telefono", "").strip()
     password = request.form["password"]
     password2 = request.form.get("password2", "")
 
     # Validaciones básicas
     if not nombre or not correo or not password:
         flash("Todos los campos son obligatorios", "danger")
+        return redirect(url_for("inicio"))
+
+    if telefono and not telefono.replace("+", "").isdigit():
+        flash("El teléfono solo debe contener números", "danger")
         return redirect(url_for("inicio"))
 
     if password != password2:
@@ -231,8 +236,13 @@ def registrar_usuario():
     from werkzeug.security import generate_password_hash
     password_hash = generate_password_hash(password)
 
-    sql = """INSERT INTO usuarios (nombre, correo, password) VALUES (%s, %s, %s)"""
-    cursor.execute(sql, (nombre, correo, password_hash))
+    # El rol se asigna SIEMPRE automáticamente como Cliente.
+    # Nunca se toma del formulario: un usuario no puede autoasignarse
+    # un rol privilegiado como Administrador.
+    rol_automatico = "Cliente"
+
+    sql = """INSERT INTO usuarios (nombre, correo, telefono, password, rol) VALUES (%s, %s, %s, %s, %s)"""
+    cursor.execute(sql, (nombre, correo, telefono or None, password_hash, rol_automatico))
     conexion.commit()
 
     cursor.close()

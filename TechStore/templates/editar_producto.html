@@ -20,44 +20,142 @@
                         </h3>
                     </div>
                     <div class="card-body">
-                        <form action="/actualizar_producto" method="POST">
+                        <form action="/actualizar_producto" method="POST" enctype="multipart/form-data" id="form-editar" novalidate>
+
+                            <!-- IMAGEN ACTUAL -->
+                            <div class="text-center mb-3">
+                                <p class="text-muted mb-1">
+                                    <i class="bi bi-image"></i> Imagen actual
+                                </p>
+                                {% if producto.imagen %}
+                                <img src="{{ url_for('static', filename='img/productos/' + producto.imagen) }}"
+                                    class="img-thumbnail" style="max-height: 150px;" alt="Imagen actual">
+                                {% else %}
+                                <img src="https://placehold.co/200x150/orange/white/Sin+imagen"
+                                    class="img-thumbnail" style="max-height: 150px;" alt="Sin imagen">
+                                <p class="text-muted small mt-1 mb-0">Este producto no tiene imagen todavía</p>
+                                {% endif %}
+                            </div>
+
                             <div class="mb-3">
                                 <label class="form-label">
-                                    Código
+                                    <i class="bi bi-tag"></i> Código
                                 </label>
                                 <input type="text" name="codigo" class="form-control" value="{{producto.codigo}}" readonly>
                             </div>
 
                             <div class="mb-3">
                                 <label class="form-label">
-                                    Nombre
+                                    <i class="bi bi-box-seam"></i> Nombre
                                 </label>
-                                <input type="text" name="nombre" class="form-control" value="{{producto.nombre}}" required>
+                                <input type="text" name="nombre" class="form-control" value="{{producto.nombre}}"
+                                    minlength="5" maxlength="100" required>
+                                <div class="invalid-feedback">
+                                    Mínimo 5 caracteres, máximo 100.
+                                </div>
                             </div>
 
                             <div class="mb-3">
                                 <label class="form-label">
-                                    Precio
+                                    <i class="bi bi-cash-coin"></i> Precio
                                 </label>
-                                <input type="number" name="precio" class="form-control" value="{{producto.precio}}" required>
+                                <input type="number" name="precio" class="form-control" value="{{producto.precio}}"
+                                    min="1" max="50000000" step="1" required>
+                                <div class="invalid-feedback">
+                                    El precio debe ser mayor que 0 y máximo 50.000.000.
+                                </div>
                             </div>
 
                             <div class="mb-3">
                                 <label class="form-label">
-                                    Categoría
+                                    <i class="bi bi-collection"></i> Categoría
                                 </label>
-                                <input type="text" name="categoria" class="form-control" value="{{producto.categoria}}" required>
+                                <input type="text" name="categoria" class="form-control" value="{{producto.categoria}}"
+                                    maxlength="50" required>
+                                <div class="invalid-feedback">
+                                    La categoría es obligatoria.
+                                </div>
                             </div>
 
-                            <button class="btn btn-primary w-100">
-                                Guardar Producto
-                            </button>
+                            <div class="mb-3">
+                                <label class="form-label">
+                                    <i class="bi bi-image"></i> Imagen
+                                    <small class="text-muted">(opcional: cambia la imagen actual)</small>
+                                </label>
+                                <input type="file" name="imagen" id="imagen" class="form-control"
+                                    accept=".png,.jpg,.jpeg,.gif,.webp">
+                                <div class="invalid-feedback">
+                                    La imagen debe ser formato png, jpg, jpeg, gif o webp.
+                                </div>
+                                <img id="vista-previa" src="#" alt="Vista previa"
+                                    class="img-thumbnail mt-2 d-none" style="max-height: 150px;">
+                            </div>
+
+                            <div class="d-grid gap-2">
+                                <button class="btn btn-primary w-100">
+                                    <i class="bi bi-save"></i> Guardar Cambios
+                                </button>
+                                <a href="/productos" class="btn btn-secondary">
+                                    <i class="bi bi-arrow-left-circle"></i>
+                                    Volver al Listado
+                                </a>
+                            </div>
                         </form>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        // Validación en el navegador
+        const formulario = document.getElementById("form-editar");
+
+        formulario.addEventListener("submit", function (evento) {
+            if (!formulario.checkValidity()) {
+                evento.preventDefault();
+                evento.stopPropagation();
+            }
+            formulario.classList.add("was-validated");
+        });
+
+        // Vista previa de la nueva imagen
+        const campoImagen = document.getElementById("imagen");
+        const vistaPrevia = document.getElementById("vista-previa");
+
+        campoImagen.addEventListener("change", function () {
+            if (campoImagen.files && campoImagen.files[0]) {
+                const lector = new FileReader();
+                lector.onload = function (e) {
+                    vistaPrevia.src = e.target.result;
+                    vistaPrevia.classList.remove("d-none");
+                };
+                lector.readAsDataURL(campoImagen.files[0]);
+            } else {
+                vistaPrevia.classList.add("d-none");
+            }
+        });
+    </script>
+
+    {% with mensajes = get_flashed_messages(with_categories=true) %}
+        {% if mensajes %}
+            {% for categoria, mensaje in mensajes %}
+            <script>
+                const iconos = { success: "success", danger: "error", error: "error", warning: "warning", info: "info" };
+                Swal.fire({
+                    icon: iconos["{{ categoria }}"] || "info",
+                    title: "{{ mensaje }}",
+                    showConfirmButton: true,
+                    confirmButtonColor: "#0d6efd",
+                    timer: 3500,
+                    timerProgressBar: true
+                });
+            </script>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
 </body>
 
 </html>

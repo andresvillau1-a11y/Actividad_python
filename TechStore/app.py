@@ -1,6 +1,11 @@
+import os
 from flask import Flask, render_template, request,redirect, url_for, flash, session
 from functools import wraps
 from database.conexion import obtener_conexion
+
+# Carpeta absoluta donde se guardan las imágenes de los productos
+# (independiente del directorio desde donde se ejecute la app)
+CARPETA_IMAGENES = os.path.join(os.path.dirname(os.path.abspath(__file__)), "static", "img", "productos")
 
 app = Flask(__name__)
 app.secret_key = "adso2026"
@@ -146,7 +151,7 @@ def guardar_producto():
         cursor = conexion.cursor()
 
         nombre_archivo = secure_filename(f"{codigo}.{extension}")
-        ruta_carpeta = os.path.join("static", "img", "productos")
+        ruta_carpeta = CARPETA_IMAGENES
         os.makedirs(ruta_carpeta, exist_ok=True)
         imagen.save(os.path.join(ruta_carpeta, nombre_archivo))
 
@@ -202,10 +207,77 @@ def editar_producto(codigo):
 @requiere_rol("Administrador")
 def actualizar_producto():
 
+    # b. Eliminar espacios innecesarios al inicio y al final
     codigo = request.form["codigo"]
-    nombre = request.form["nombre"]
-    precio = request.form["precio"]
-    categoria = request.form["categoria"]
+    nombre = request.form["nombre"].strip()
+    precio_texto = request.form["precio"].strip()
+    categoria = request.form["categoria"].strip()
+    imagen = request.files.get("imagen")
+
+    # Validaciones (mismas reglas del registro)
+    errores = []
+
+    if not nombre or not precio_texto or not categoria:
+        errores.append("Ningún campo puede quedar vacío")
+
+    if nombre and len(nombre) < 5:
+        errores.append("El nombre del producto debe tener al menos 5 caracteres")
+    if nombre and len(nombre) > 100:
+        errores.append("El nombre del producto no puede superar los 100 caracteres")
+
+    precio = None
+    try:
+        precio = float(precio_texto)
+        if precio <= 0:
+            errores.append("El precio debe ser mayor que cero")
+        if precio > 50000000:
+            errores.append("El precio no puede ser mayor a 50.000.000")
+    except ValueError:
+        errores.append("El precio debe ser un número válido")
+
+    # La imagen es OPCIONAL al editar: solo se procesa si el usuario
+    # seleccionó una nueva. Si no, se conserva la actual.
+    nombre_archivo = None
+    if imagen and imagen.filename != "":
+        import os
+        from werkzeug.utils import secure_filename
+
+        extensiones_permitidas = {"png", "jpg", "jpeg", "gif", "webp"}
+        extension = imagen.filename.rsplit(".", 1)[-1].lower()
+        if extension not in extensiones_permitidas:
+            errores.append("La imagen debe ser formato png, jpg, jpeg, gif o webp")
+        else:
+            nombre_archivo = secure_filename(f"{codigo}.{extension}")
+
+    # Mostrar errores y no actualizar nada
+    if errores:
+        for error in errores:
+            flash(error, "danger")
+        return redirect(url_for("editar_producto", codigo=codigo))
+
+    # Si se seleccionó una imagen nueva, guardarla y eliminar la anterior
+    if nombre_archivo:
+        import os
+
+        ruta_carpeta = CARPETA_IMAGENES
+        os.makedirs(ruta_carpeta, exist_ok=True)
+
+        # Obtener la imagen actual del producto para borrarla si cambia
+        conexion = obtener_conexion()
+        cursor = conexion.cursor()
+        cursor.execute("SELECT imagen FROM productos WHERE codigo=%s", (codigo,))
+        fila = cursor.fetchone()
+        imagen_anterior = fila[0] if fila else None
+
+        if imagen_anterior and imagen_anterior != nombre_archivo:
+            ruta_anterior = os.path.join(ruta_carpeta, imagen_anterior)
+            if os.path.exists(ruta_anterior):
+                os.remove(ruta_anterior)
+
+        cursor.close()
+        conexion.close()
+
+        imagen.save(os.path.join(ruta_carpeta, nombre_archivo))
 
     # Obtener la conexión
     conexion = obtener_conexion()
@@ -213,18 +285,13 @@ def actualizar_producto():
     # Crear el cursor
     cursor = conexion.cursor()
 
-    # Consulta SQL
-    sql = """UPDATE productos SET nombre = %s,precio = %s,categoria = %s  WHERE codigo = %s """
-
-    cursor.execute(
-        sql,
-        (
-            nombre,
-            precio,
-            categoria,
-            codigo
-        )
-    )
+    # Consulta SQL (la imagen solo se actualiza si se subió una nueva)
+    if nombre_archivo:
+        sql = """UPDATE productos SET nombre = %s,precio = %s,categoria = %s, imagen = %s WHERE codigo = %s """
+        cursor.execute(sql, (nombre, precio, categoria, nombre_archivo, codigo))
+    else:
+        sql = """UPDATE productos SET nombre = %s,precio = %s,categoria = %s WHERE codigo = %s """
+        cursor.execute(sql, (nombre, precio, categoria, codigo))
 
     # Guardar los cambios
     conexion.commit()

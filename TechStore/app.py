@@ -270,6 +270,8 @@ def login():
         session["usuario"]= usuario["nombre"]
         session["rol"] = usuario["rol"]
 
+        flash(f"¡Bienvenido {usuario['nombre']}! Sesión iniciada correctamente", "success")
+
         return redirect(url_for("admin"))
     else:
         flash("Correo o contraseña incorrectos","danger")
@@ -290,6 +292,8 @@ def admin():
 def logout():
 
     session.clear()
+
+    flash("Sesión cerrada correctamente", "info")
 
     return redirect(url_for("inicio"))
 

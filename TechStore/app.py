@@ -1,8 +1,26 @@
 from flask import Flask, render_template, request,redirect, url_for, flash, session
+from functools import wraps
 from database.conexion import obtener_conexion
 
 app = Flask(__name__)
 app.secret_key = "adso2026"
+
+def requiere_rol(*roles_permitidos):
+    """Protege una ruta """
+    def decorador(ruta):
+        @wraps(ruta)
+        def envoltura(*args, **kwargs):
+            if "usuario" not in session:
+                flash("Debes iniciar sesión", "danger")
+                return redirect(url_for("inicio"))
+            if session.get("rol") not in roles_permitidos:
+                flash("No tienes permiso para acceder a esa página", "danger")
+                if session.get("rol") == "Administrador":
+                    return redirect(url_for("productos"))
+                return redirect(url_for("panel_cliente"))
+            return ruta(*args, **kwargs)
+        return envoltura
+    return decorador
 
 @app.route("/")
 def inicio():
@@ -15,6 +33,7 @@ def inicio():
      return render_template("index1.html", productos = productos)
 
 @app.route("/productos")
+@requiere_rol("Administrador")
 def productos():
     conexion = obtener_conexion()
 
@@ -49,18 +68,14 @@ def catalogo():
 #Proteccion de rutas
 
 @app.route("/registro_producto")
+@requiere_rol("Administrador")
 def registro_producto():
-    if "usuario" not in session:
-
-        return redirect(url_for("inicio"))
     return render_template("registro_producto.html")
 
 
 @app.route("/guardar_producto",methods=["POST"])
+@requiere_rol("Administrador")
 def guardar_producto():
-
-        if "usuario" not in session:
-            return redirect(url_for("inicio"))
 
         import re
         import os
@@ -159,11 +174,8 @@ def guardar_producto():
 
 
 @app.route("/editar_producto/<codigo>")
+@requiere_rol("Administrador")
 def editar_producto(codigo):
-
-    # Verificar si existe una sesión activa
-    if "usuario" not in session:
-        return redirect(url_for("inicio"))
 
     conexion = obtener_conexion()
     cursor = conexion.cursor(dictionary=True)
@@ -187,10 +199,8 @@ def editar_producto(codigo):
     )
 
 @app.route("/actualizar_producto", methods=["POST"])
+@requiere_rol("Administrador")
 def actualizar_producto():
-
-    if "usuario" not in session:
-        return redirect(url_for("inicio"))
 
     codigo = request.form["codigo"]
     nombre = request.form["nombre"]
@@ -230,12 +240,9 @@ def actualizar_producto():
     return redirect(url_for("productos"))
 
 @app.route("/eliminar_producto/<codigo>")
+@requiere_rol("Administrador")
 def eliminar_producto(codigo):
 
-
-    if "usuario" not in session:
-        return redirect(url_for("inicio"))
-    
     conexion = obtener_conexion()
     
     cursor = conexion.cursor()
@@ -336,10 +343,14 @@ def login():
                     or usuario["password"] == password):
         session["usuario"]= usuario["nombre"]
         session["rol"] = usuario["rol"]
+        session["id_usuario"] = usuario["id"]
 
         flash(f"¡Bienvenido {usuario['nombre']}! Sesión iniciada correctamente", "success")
 
-        return redirect(url_for("admin"))
+        # Redirigir según el rol del usuario
+        if usuario["rol"] == "Administrador":
+            return redirect(url_for("productos"))
+        return redirect(url_for("panel_cliente"))
     else:
         flash("Correo o contraseña incorrectos","danger")
 
@@ -347,13 +358,122 @@ def login():
     
 
 @app.route("/admin")
+@requiere_rol("Administrador")
 def admin():
 
-    if "usuario" not in session:
-
-        return redirect(url_for("inicio"))
-
     return render_template("admin.html")
+
+
+@app.route("/cliente")
+@requiere_rol("Cliente")
+def panel_cliente():
+
+    # Consultar los datos personales del usuario en sesión
+    conexion = obtener_conexion()
+    cursor = conexion.cursor(dictionary=True)
+    cursor.execute("SELECT id, nombre, correo, telefono, rol, estado FROM usuarios WHERE id=%s", (session["id_usuario"],))
+    datos = cursor.fetchone()
+    cursor.close()
+    conexion.close()
+
+    return render_template("cliente.html", usuario=datos)
+
+
+@app.route("/actualizar_datos", methods=["POST"])
+@requiere_rol("Cliente", "Administrador")
+def actualizar_datos():
+
+    id_sesion = session["id_usuario"]
+    nombre = request.form["nombre"].strip()
+    telefono = request.form.get("telefono", "").strip()
+
+    if not nombre:
+        flash("El nombre no puede quedar vacío", "danger")
+        return redirect(url_for("panel_cliente"))
+
+    if telefono and not telefono.replace("+", "").isdigit():
+        flash("El teléfono solo debe contener números", "danger")
+        return redirect(url_for("panel_cliente"))
+
+    conexion = obtener_conexion()
+    cursor = conexion.cursor()
+
+    # El cliente solo puede actualizar SUS PROPIOS datos (id de sesión)
+    sql = "UPDATE usuarios SET nombre=%s, telefono=%s WHERE id=%s"
+    cursor.execute(sql, (nombre, telefono or None, id_sesion))
+    conexion.commit()
+
+    cursor.close()
+    conexion.close()
+
+    # Mantener la sesión con el nombre nuevo
+    session["usuario"] = nombre
+
+    flash("Datos actualizados correctamente", "success")
+    return redirect(url_for("panel_cliente"))
+
+
+@app.route("/reporte_pdf")
+@requiere_rol("Administrador")
+def reporte_pdf():
+
+    from reportlab.lib.pagesizes import letter
+    from reportlab.lib import colors
+    from reportlab.lib.units import cm
+    from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
+    from reportlab.lib.styles import getSampleStyleSheet
+    from io import BytesIO
+
+    # Consultar los productos
+    conexion = obtener_conexion()
+    cursor = conexion.cursor()
+    cursor.execute("SELECT codigo, nombre, precio, categoria FROM productos ORDER BY codigo")
+    productos = cursor.fetchall()
+    cursor.close()
+    conexion.close()
+
+    # Crear el PDF en memoria
+    buffer = BytesIO()
+    documento = SimpleDocTemplate(buffer, pagesize=letter,
+                                  title="Reporte de Productos - TechStore")
+
+    estilos = getSampleStyleSheet()
+    elementos = []
+
+    titulo = Paragraph("<b>TECHSTORE - Listado de Productos</b>", estilos["Title"])
+    elementos.append(titulo)
+    elementos.append(Paragraph("Reporte generado por: " + session["usuario"], estilos["Normal"]))
+    elementos.append(Spacer(1, 0.5 * cm))
+
+    # Encabezado de la tabla
+    datos = [["Código", "Nombre", "Precio", "Categoría"]]
+    for producto in productos:
+        datos.append([producto[0], producto[1], f"$ {producto[2]:,.0f}", producto[3]])
+
+    tabla = Table(datos, colWidths=[3 * cm, 7 * cm, 4 * cm, 4 * cm])
+    tabla.setStyle(TableStyle([
+        ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#1a1d20")),
+        ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
+        ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+        ("FONTSIZE", (0, 0), (-1, 0), 11),
+        ("ALIGN", (0, 0), (-1, 0), "CENTER"),
+        ("GRID", (0, 0), (-1, -1), 0.5, colors.grey),
+        ("ROWBACKGROUNDS", (0, 1), (-1, -1), [colors.white, colors.HexColor("#f2f2f2")]),
+        ("FONTSIZE", (0, 1), (-1, -1), 10),
+        ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+    ]))
+    elementos.append(tabla)
+
+    elementos.append(Spacer(1, 0.5 * cm))
+    elementos.append(Paragraph(f"Total de productos: {len(productos)}", estilos["Normal"]))
+
+    documento.build(elementos)
+
+    buffer.seek(0)
+
+    from flask import send_file
+    return send_file(buffer, as_attachment=True,
+                     download_name="reporte_productos.pdf", mimetype="application/pdf")
 
 @app.route("/logout")
 def logout():

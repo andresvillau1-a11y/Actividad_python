@@ -56,9 +56,18 @@
 
         <div class="container">
 
-            <a class="navbar-brand fw-bold" href="#">
-                🛒 TechStore
+            <a class="navbar-brand fw-bold" href="/admin">
+                <i class="bi bi-cpu"></i> TECHSTORE | Gestión de Productos
             </a>
+
+            <div class="d-flex gap-2">
+                <a href="/admin" class="btn btn-outline-light btn-sm">
+                    <i class="bi bi-speedometer2"></i> Panel
+                </a>
+                <a href="/logout" class="btn btn-outline-light btn-sm">
+                    <i class="bi bi-box-arrow-right"></i> Salir
+                </a>
+            </div>
 
         </div>
 
@@ -76,9 +85,15 @@
                     Gestión de Productos
                 </h3>
 
-                <span class="badge bg-warning text-dark fs-6">
-                    Total: {{ productos|length }}
-                </span>
+                <div class="d-flex align-items-center gap-2">
+                    <span class="badge bg-warning text-dark fs-6">
+                        Total: {{ productos|length }}
+                    </span>
+
+                    <a href="/reporte_pdf" class="btn btn-danger btn-sm">
+                        <i class="bi bi-file-earmark-pdf"></i> Generar PDF
+                    </a>
+                </div>
 
             </div>
 

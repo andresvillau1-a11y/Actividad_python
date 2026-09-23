@@ -18,7 +18,8 @@ CREATE TABLE productos(
 codigo VARCHAR(20) PRIMARY KEY,
 nombre VARCHAR(80) NOT NULL,
 precio DECIMAL(10,2) NOT NULL,
-categoria VARCHAR(50)
+categoria VARCHAR(50),
+imagen VARCHAR(255) NULL
 );
 
 -- TRUNCATE productos;

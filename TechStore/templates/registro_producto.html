@@ -38,33 +38,65 @@
                         </h3>
                     </div>
                     <div class="card-body">
-                        <form action="/guardar_producto" method="POST">
+                        <form action="/guardar_producto" method="POST" enctype="multipart/form-data" id="form-producto" novalidate>
                             <div class="mb-3">
                                 <label class="form-label">
-                                    Código
+                                    <i class="bi bi-tag"></i> Código
                                 </label>
-                                <input type="text" name="codigo" class="form-control" required>
+                                <input type="text" name="codigo" id="codigo" class="form-control"
+                                    pattern="P\d{3,}" minlength="4" maxlength="20"
+                                    placeholder="Ej: P001" required>
+                                <div class="invalid-feedback">
+                                    Debe comenzar con P seguida de mínimo 3 números (ej: P001).
+                                </div>
                             </div>
 
                             <div class="mb-3">
                                 <label class="form-label">
-                                    Nombre
+                                    <i class="bi bi-box-seam"></i> Nombre
                                 </label>
-                                <input type="text" name="nombre" class="form-control" required>
+                                <input type="text" name="nombre" class="form-control"
+                                    minlength="5" maxlength="100"
+                                    placeholder="Ej: Laptop Gamer Asus" required>
+                                <div class="invalid-feedback">
+                                    Mínimo 5 caracteres, máximo 100.
+                                </div>
                             </div>
 
                             <div class="mb-3">
                                 <label class="form-label">
-                                    Precio
+                                    <i class="bi bi-cash-coin"></i> Precio
                                 </label>
-                                <input type="number" name="precio" class="form-control" required>
+                                <input type="number" name="precio" class="form-control"
+                                    min="1" max="50000000" step="1"
+                                    placeholder="Mayor que 0 y máximo 50.000.000" required>
+                                <div class="invalid-feedback">
+                                    El precio debe ser mayor que 0 y máximo 50.000.000.
+                                </div>
                             </div>
 
                             <div class="mb-3">
                                 <label class="form-label">
-                                    Categoría
+                                    <i class="bi bi-collection"></i> Categoría
                                 </label>
-                                <input type="text" name="categoria" class="form-control" required>
+                                <input type="text" name="categoria" class="form-control"
+                                    maxlength="50" placeholder="Ej: Computadores" required>
+                                <div class="invalid-feedback">
+                                    La categoría es obligatoria.
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">
+                                    <i class="bi bi-image"></i> Imagen del producto
+                                </label>
+                                <input type="file" name="imagen" id="imagen" class="form-control"
+                                    accept=".png,.jpg,.jpeg,.gif,.webp" required>
+                                <div class="invalid-feedback">
+                                    Debe seleccionar una imagen (png, jpg, jpeg, gif o webp).
+                                </div>
+                                <img id="vista-previa" src="#" alt="Vista previa"
+                                    class="img-thumbnail mt-2 d-none" style="max-height: 150px;">
                             </div>
                             
                             <div class="d-grid gap-2">
@@ -83,6 +115,62 @@
             </div>
         </div>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        // Validación en el navegador (además de la validación del servidor)
+        const formulario = document.getElementById("form-producto");
+
+        formulario.addEventListener("submit", function (evento) {
+            if (!formulario.checkValidity()) {
+                evento.preventDefault();
+                evento.stopPropagation();
+            }
+            formulario.classList.add("was-validated");
+        });
+
+        // Vista previa de la imagen seleccionada
+        const campoImagen = document.getElementById("imagen");
+        const vistaPrevia = document.getElementById("vista-previa");
+
+        campoImagen.addEventListener("change", function () {
+            if (campoImagen.files && campoImagen.files[0]) {
+                const lector = new FileReader();
+                lector.onload = function (e) {
+                    vistaPrevia.src = e.target.result;
+                    vistaPrevia.classList.remove("d-none");
+                };
+                lector.readAsDataURL(campoImagen.files[0]);
+            } else {
+                vistaPrevia.classList.add("d-none");
+            }
+        });
+    </script>
+
+    {% with mensajes = get_flashed_messages(with_categories=true) %}
+
+        {% if mensajes %}
+
+            {% for categoria, mensaje in mensajes %}
+
+            <script>
+                // Flask usa "danger", SweetAlert2 usa "error"
+                const iconos = { success: "success", danger: "error", error: "error", warning: "warning", info: "info" };
+                Swal.fire({
+                    icon: iconos["{{ categoria }}"] || "info",
+                    title: "{{ mensaje }}",
+                    showConfirmButton: true,
+                    confirmButtonColor: "#0d6efd",
+                    timer: 4000,
+                    timerProgressBar: true
+                });
+            </script>
+
+            {% endfor %}
+
+        {% endif %}
+
+    {% endwith %}
 </body>
 
 </html>

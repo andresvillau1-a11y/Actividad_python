@@ -61,25 +61,81 @@ def guardar_producto():
 
         if "usuario" not in session:
             return redirect(url_for("inicio"))
-        
+
+        import re
+        import os
+        from werkzeug.utils import secure_filename
+
+        # b. Eliminar espacios innecesarios al inicio y al final
         codigo = request.form["codigo"].strip()
         nombre = request.form["nombre"].strip()
-        precio = request.form["precio"]
+        precio_texto = request.form["precio"].strip()
         categoria = request.form["categoria"].strip()
+        imagen = request.files.get("imagen")
 
+        errores = []
 
-    # return render_template(
-    #     "respuesta.html",
-    #     codigo=codigo,
-    #     nombre=nombre,
-    #     precio=precio,
-    #     categoria=categoria
-    # )
+        # a. Ningún campo puede quedar vacío
+        if not codigo or not nombre or not precio_texto or not categoria:
+            errores.append("Ningún campo puede quedar vacío")
+
+        # e. Código: comienza con P seguido de mínimo 3 números (ej: P001, P0001)
+        if codigo and not re.fullmatch(r"P\d{3,}", codigo):
+            errores.append("El código debe comenzar con la letra P seguida de mínimo 3 números (ej: P001). No acepta letras, espacios ni otros caracteres")
+
+        # g. y h. Nombre: mínimo 5 y máximo 100 caracteres
+        if nombre and len(nombre) < 5:
+            errores.append("El nombre del producto debe tener al menos 5 caracteres")
+        if nombre and len(nombre) > 100:
+            errores.append("El nombre del producto no puede superar los 100 caracteres")
+
+        # c. e i. Precio: mayor que cero y máximo 50000000
+        precio = None
+        try:
+            precio = float(precio_texto)
+            if precio <= 0:
+                errores.append("El precio debe ser mayor que cero")
+            if precio > 50000000:
+                errores.append("El precio no puede ser mayor a 50.000.000")
+        except ValueError:
+            errores.append("El precio debe ser un número válido")
+
+        # j. El formulario debe solicitar una imagen del producto
+        nombre_archivo = None
+        if not imagen or imagen.filename == "":
+            errores.append("Debe seleccionar una imagen del producto")
+        else:
+            extensiones_permitidas = {"png", "jpg", "jpeg", "gif", "webp"}
+            extension = imagen.filename.rsplit(".", 1)[-1].lower()
+            if extension not in extensiones_permitidas:
+                errores.append("La imagen debe ser formato png, jpg, jpeg, gif o webp")
+
+        # d. Código duplicado: validar contra la base de datos
+        if codigo and not errores:
+            conexion = obtener_conexion()
+            cursor = conexion.cursor()
+            cursor.execute("SELECT codigo FROM productos WHERE codigo=%s", (codigo,))
+            if cursor.fetchone():
+                errores.append(f"El código {codigo} ya está registrado")
+            cursor.close()
+            conexion.close()
+
+        # Mostrar todos los errores y no guardar nada
+        if errores:
+            for error in errores:
+                flash(error, "danger")
+            return redirect(url_for("registro_producto"))
+
+        # Guardar la imagen en static/img/productos
         conexion = obtener_conexion()
-
         cursor = conexion.cursor()
 
-        sql = """ INSERT INTO productos (codigo,nombre,precio,categoria) VALUES (%s,%s,%s,%s) """
+        nombre_archivo = secure_filename(f"{codigo}.{extension}")
+        ruta_carpeta = os.path.join("static", "img", "productos")
+        os.makedirs(ruta_carpeta, exist_ok=True)
+        imagen.save(os.path.join(ruta_carpeta, nombre_archivo))
+
+        sql = """ INSERT INTO productos (codigo,nombre,precio,categoria,imagen) VALUES (%s,%s,%s,%s,%s) """
 
         cursor.execute(
         sql,
@@ -87,7 +143,8 @@ def guardar_producto():
             codigo,
             nombre,
             precio,
-            categoria
+            categoria,
+            nombre_archivo
          )
         ) 
 

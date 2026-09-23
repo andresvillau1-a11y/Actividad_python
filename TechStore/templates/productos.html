@@ -195,8 +195,10 @@ document.addEventListener("DOMContentLoaded", function () {
         {% for categoria, mensaje in mensajes %}
 
         <script>
+            // Flask usa "danger", SweetAlert2 usa "error"
+            const iconos = { success: "success", danger: "error", error: "error", warning: "warning", info: "info" };
             Swal.fire({
-                icon: "{{ categoria }}",
+                icon: iconos["{{ categoria }}"] || "info",
                 title: "{{ mensaje }}",
                 showConfirmButton: false,
                 timer: 2000

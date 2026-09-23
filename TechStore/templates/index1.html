@@ -35,19 +35,24 @@
 
 <body>
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     {% with mensajes = get_flashed_messages(with_categories=true) %}
     {% if mensajes %}
         {% for categoria,mensaje in mensajes %}
 
-            <div class="alert alert-{{categoria}} alert-dismissible fade show">
-
-                {{mensaje}}
-
-                <button
-                class="btn-close"
-                data-bs-dismiss="alert"></button>
-
-            </div>
+            <script>
+                // Flask usa "danger", SweetAlert2 usa "error"
+                const iconos = { success: "success", danger: "error", error: "error", warning: "warning", info: "info" };
+                Swal.fire({
+                    icon: iconos["{{ categoria }}"] || "info",
+                    title: "{{ mensaje }}",
+                    showConfirmButton: true,
+                    confirmButtonColor: "#0d6efd",
+                    timer: 3500,
+                    timerProgressBar: true
+                });
+            </script>
 
         {% endfor %}
     {% endif %}
